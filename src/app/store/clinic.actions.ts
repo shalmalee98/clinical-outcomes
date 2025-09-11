@@ -24,7 +24,7 @@ export const loadGMIFailure = createAction(
 );
 
 // Combined Actions
-export const loadAllClinicData = createAction('[Clinic] Load All Data');
+export const loadAllClinicData = createAction('[Clinic] Load All Data', props<{ range: number }>());
 export const loadAllClinicDataSuccess = createAction(
   '[Clinic] Load All Data Success',
   props<{ outcomes: ClinicOutcomes }>()

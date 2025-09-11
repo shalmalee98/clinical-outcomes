@@ -13,70 +13,64 @@ import * as ClinicSelectors from '../store/clinic.selectors';
   standalone: true,
   imports: [CommonModule, TimeInRangeChartComponent, GMIChartComponent],
   template: `
-    <div class="min-h-screen bg-gray-50 p-6">
+    <div class="min-h-screen bg-gray-50 p-8">
       <div class="max-w-7xl mx-auto" id="dashboard-content">
 
         <!-- Header -->
-        <div class="mb-6 flex items-center justify-between">
-          <h1 class="text-3xl font-bold text-gray-900">Clinic Outcomes</h1>
-          <div class="flex gap-2">
-            <button
-              (click)="setDateRange(30)"
-              [class.bg-blue-600]="selectedRange === 30"
-              [class.text-white]="selectedRange === 30"
-              class="px-3 py-1 rounded-md border text-sm font-medium text-gray-700 hover:bg-blue-100">
-              30 Days
-            </button>
-            <button
-              (click)="setDateRange(60)"
-              [class.bg-blue-600]="selectedRange === 60"
-              [class.text-white]="selectedRange === 60"
-              class="px-3 py-1 rounded-md border text-sm font-medium text-gray-700 hover:bg-blue-100">
-              60 Days
-            </button>
-            <button
-              (click)="setDateRange(90)"
-              [class.bg-blue-600]="selectedRange === 90"
-              [class.text-white]="selectedRange === 90"
-              class="px-3 py-1 rounded-md border text-sm font-medium text-gray-700 hover:bg-blue-100">
-              90 Days
-            </button>
-          </div>
+        <div class="flex items-center justify-between mb-4">
+          <h1 class="text-2xl font-semibold text-gray-900">Clinic Outcomes</h1>
+
+          <!-- Print button -->
+          <button
+            (click)="printDashboard()"
+            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 9V2h12v7M6 18h12v4H6v-4zM6 14h12v4H6v-4z" />
+            </svg>
+            Print
+          </button>
         </div>
 
-        <!-- Info Row -->
-        <div class="flex flex-wrap gap-6 text-sm text-gray-600 mb-6">
-          <div *ngIf="dateRange$ | async as dateRange" class="flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            <span>{{ formatDateRange(dateRange.startDate, dateRange.endDate) }}</span>
-          </div>
+        <!-- Range selectors -->
+        <div class="flex gap-3 mb-4">
+          <button
+            (click)="setDateRange(30)"
+            [class.bg-blue-600]="selectedRange === 30"
+            [class.text-white]="selectedRange === 30"
+            class="px-4 py-1 rounded-full border text-sm font-medium text-gray-700 hover:bg-blue-100">
+            30 days
+          </button>
+          <button
+            (click)="setDateRange(60)"
+            [class.bg-blue-600]="selectedRange === 60"
+            [class.text-white]="selectedRange === 60"
+            class="px-4 py-1 rounded-full border text-sm font-medium text-gray-700 hover:bg-blue-100">
+            60 days
+          </button>
+          <button
+            (click)="setDateRange(90)"
+            [class.bg-blue-600]="selectedRange === 90"
+            [class.text-white]="selectedRange === 90"
+            class="px-4 py-1 rounded-full border text-sm font-medium text-gray-700 hover:bg-blue-100">
+            90 days
+          </button>
+        </div>
 
-          <div *ngIf="activePatients$ | async as activePatients" class="flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2
-                   c0-.656-.126-1.283-.356-1.857M7 20H2v-2
-                   a3 3 0 015.356-1.857M7 20v-2
-                   c0-.656.126-1.283.356-1.857
-                   m0 0a5.002 5.002 0 019.288 0M15 7
-                   a3 3 0 11-6 0 3 3 0 016 0zm6 3
-                   a2 2 0 11-4 0 2 2 0 014 0zM7 10
-                   a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-            <span>{{ activePatients }} active patients</span>
-          </div>
+        <!-- Date & Info Row -->
+        <div class="mb-1 text-sm text-gray-700">
+          <ng-container *ngIf="dateRange$ | async as dateRange">
+            Showing {{ activePatients$ | async }} patients from last {{ selectedRange }} days
+            of available data from {{ formatDateRange(dateRange.startDate, dateRange.endDate) }}
+          </ng-container>
+        </div>
 
-          <div *ngIf="lastUpdated$ | async as lastUpdated" class="flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0
-                   9 9 0 0118 0z"></path>
-            </svg>
-            <span>Last updated: {{ formatLastUpdated(lastUpdated) }}</span>
-          </div>
+        <!-- Info note -->
+        <div class="mb-6 text-xs italic text-gray-500">
+          Only patients with a minimum of 10 days of SG data are included.
+          <ng-container *ngIf="lastUpdated$ | async as lastUpdated">
+            Last updated on {{ formatLastUpdated(lastUpdated) }}
+          </ng-container>
         </div>
 
         <!-- Loading -->
@@ -91,30 +85,15 @@ import * as ClinicSelectors from '../store/clinic.selectors';
         </div>
 
         <!-- Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <app-time-in-range-chart [data]="timeInRangeData$ | async"></app-time-in-range-chart>
           <app-gmi-chart [data]="gmiData$ | async"></app-gmi-chart>
-        </div>
-
-        <!-- Actions -->
-        <div class="mt-8 flex justify-center gap-4">
-          <button
-            (click)="refreshData()"
-            [disabled]="loading$ | async"
-            class="inline-flex items-center px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50">
-            Refresh Data
-          </button>
-
-          <button
-            (click)="printDashboard()"
-            class="inline-flex items-center px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
-            Print
-          </button>
         </div>
       </div>
     </div>
   `
 })
+
 export class DashboardComponent implements OnInit {
   timeInRangeData$: Observable<TimeInRangeData | null>;
   gmiData$: Observable<GMIData | null>;
@@ -141,7 +120,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadData(): void {
-    this.store.dispatch(ClinicActions.loadAllClinicData());
+    this.store.dispatch(ClinicActions.loadAllClinicData({ range: this.selectedRange }));
   }
 
   refreshData(): void {
