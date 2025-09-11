@@ -24,7 +24,7 @@ A modern **Angular + NgRx + TailwindCSS** dashboard to visualize **clinic outcom
 
 ### Installation & running
 ```bash
-git clone https://github.com/YOUR-USERNAME/clinic-outcomes.git
+git clone https://github.com/shalmalee98/clinic-outcomes.git
 cd clinic-outcomes
 npm install
 ng serve
